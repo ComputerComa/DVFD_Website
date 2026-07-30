@@ -42,6 +42,7 @@ export default function AdminLogin() {
         <button>Sign in</button>
       </form>
       <p role="status">{message}</p>
+      <p><a href="/admin/forgot-password">Forgot your password?</a></p>
     </main>
   );
 }

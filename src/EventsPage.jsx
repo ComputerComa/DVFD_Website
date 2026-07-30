@@ -23,10 +23,13 @@ export default function EventsPage() {
             id: event.id,
             title: event.title,
             start: event.rrule ? undefined : event.start_at,
+            end: event.rrule ? undefined : event.end_at,
             rrule: event.rrule || undefined,
             duration: event.end_at
               ? new Date(event.end_at).getTime() - new Date(event.start_at).getTime()
               : undefined,
+            location: event.location,
+            description: event.description,
             extendedProps: {
               details: [event.location, event.description]
                 .filter(Boolean)
@@ -36,6 +39,14 @@ export default function EventsPage() {
         );
       });
   }, []);
+  useEffect(() => {
+    if (!selected) return;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setSelected(null);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [selected]);
 
   return (
     <main className="events-page">
@@ -64,18 +75,60 @@ export default function EventsPage() {
             info.jsEvent.preventDefault();
             setSelected({
               title: info.event.title,
-              details: info.event.extendedProps.details,
+              details:
+                info.event.extendedProps.description ||
+                info.event.extendedProps.details,
+              location: info.event.extendedProps.location,
             });
           }}
         />
-        {selected && (
-          <aside className="event-detail">
-            <p className="event-label">Event details</p>
-            <h2>{selected.title}</h2>
-            <p>{selected.details || "More details will be shared soon."}</p>
-          </aside>
-        )}
       </section>
+      {selected && (
+        <div className="event-modal-backdrop" onMouseDown={() => setSelected(null)}>
+          <section
+            className="event-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="event-modal-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button
+              className="event-modal-close"
+              type="button"
+              onClick={() => setSelected(null)}
+              aria-label="Close event details"
+            >
+              ×
+            </button>
+            <p className="event-label">Event details</p>
+            <h2 id="event-modal-title">{selected.title}</h2>
+            <div className="event-modal-content">
+              <div>
+                <p>{selected.details || "More details will be shared soon."}</p>
+                {selected.location && (
+                  <p className="event-modal-location">{selected.location}</p>
+                )}
+              </div>
+              {selected.location && (
+                <div className="event-modal-map">
+                  <iframe
+                    title={`Map for ${selected.title}`}
+                    loading="lazy"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(selected.location)}&output=embed`}
+                  />
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selected.location)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in Maps →
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

@@ -30,7 +30,7 @@ export default function AdminUsers() {
           await call("invite", {
             email,
             isAdmin,
-            redirectTo: `${location.origin}/admin/events`,
+            redirectTo: `${location.origin}/admin/reset-password`,
           })
         ).message,
       );

@@ -355,6 +355,16 @@ footer p {
   font-size: 0.8rem;
   line-height: 1.7;
 }
+.phone-link,
+.social-link {
+  align-items: center;
+  color: #bfcbcf;
+  display: inline-flex;
+  gap: 0.55rem;
+  text-decoration: none;
+}
+.phone-link:hover,
+.social-link:hover { color: var(--gold); }
 .legal {
   border-top: 1px solid #ffffff20;
   font-size: 0.72rem;

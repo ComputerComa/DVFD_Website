@@ -12,6 +12,9 @@ import AdminUsers from "./AdminUsers";
 import AdminGate from "./AdminGate";
 import AdminLogin from "./AdminLogin";
 import AdminLogout from "./AdminLogout";
+import AdminForgotPassword from "./AdminForgotPassword";
+import AdminResetPassword from "./AdminResetPassword";
+import AdminAuthCallback from "./AdminAuthCallback";
 import ErrorPage from "./ErrorPage";
 import EventsPage from "./EventsPage";
 import { supabase } from "./lib/supabase";
@@ -21,6 +24,7 @@ import "./admin.css";
 import "./recurrence.css";
 import "./error.css";
 import "./events-page.css";
+import { Facebook, TelephoneFill } from "react-bootstrap-icons";
 
 const services = [
   [
@@ -73,16 +77,19 @@ function App() {
     {
       title: "National Night Out",
       start: "2026-08-04",
+      location: "Deshler City Park, Deshler, NE",
       extendedProps: { details: "6:00 PM · Deshler City Park" },
     },
     {
       title: "Open House & Apparatus Tour",
       start: "2026-08-15",
+      location: "404 E Pearl Ave, Deshler, NE 68340",
       extendedProps: { details: "10:00 AM · Fire Station" },
     },
     {
       title: "Annual Pancake Feed",
       start: "2026-09-05",
+      location: "Deshler Legion Hall, Deshler, NE",
       extendedProps: { details: "7:00 AM · Deshler Legion Hall" },
     },
   ]);
@@ -99,6 +106,7 @@ function App() {
             id: event.id,
             title: event.title,
             start: event.rrule ? undefined : event.start_at,
+            end: event.rrule ? undefined : event.end_at,
             rrule: event.rrule || undefined,
             duration: event.end_at
               ? new Date(event.end_at).getTime() -
@@ -107,6 +115,8 @@ function App() {
             sourceStart: event.start_at,
             sourceEnd: event.end_at,
             bannerMessage: event.banner_message,
+            location: event.location,
+            description: event.description,
             extendedProps: {
               details: [event.location, event.description]
                 .filter(Boolean)
@@ -121,12 +131,51 @@ function App() {
     return () => window.clearInterval(timer);
   }, []);
   useEffect(() => {
+    if (!selectedEvent) return;
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") setSelectedEvent(null);
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => document.removeEventListener("keydown", closeOnEscape);
+  }, [selectedEvent]);
+  useEffect(() => {
     if (!supabase) return;
-    supabase
-      .from("site_banners")
-      .select("message, enabled, starts_at, ends_at")
-      .maybeSingle()
-      .then(({ data }) => setBanner(data));
+
+    let disposed = false;
+    const loadBanner = async () => {
+      const { data, error } = await supabase
+        .from("site_banners")
+        .select("message, enabled, starts_at, ends_at")
+        .eq("id", 1)
+        .maybeSingle();
+
+      if (!disposed && !error) setBanner(data);
+    };
+
+    loadBanner();
+
+    const channel = supabase
+      .channel("public-site-banner")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "site_banners",
+          filter: "id=eq.1",
+        },
+        loadBanner,
+      )
+      .subscribe();
+
+    // Keeps the banner current if a browser or network blocks its WebSocket.
+    const refreshTimer = window.setInterval(loadBanner, 30 * 1000);
+
+    return () => {
+      disposed = true;
+      window.clearInterval(refreshTimer);
+      supabase.removeChannel(channel);
+    };
   }, []);
   useEffect(() => {
     const controller = new AbortController();
@@ -174,17 +223,19 @@ function App() {
       .filter((event) => eventBannerIsActive(event, now))
       .map((event) => `Event notice — ${event.title}: ${event.bannerMessage}`),
   ];
+  const displayBannerMessages = bannerMessages.map((message) =>
+    message
+      .replace(/^Department update:\s*/, "")
+      .replace(/^NWS alert:\s*/, "")
+      .replace(/^Event notice — .*?:\s*/, ""),
+  );
   return (
     <>
-      {bannerMessages.length > 0 && (
-        <aside
-          className="site-banner"
-          aria-label="Department announcements"
-          aria-live="polite"
-        >
+      {displayBannerMessages.length > 0 && (
+        <aside className="site-banner" aria-label="" aria-live="polite">
           <div className="site-banner-track">
-            <span>{bannerMessages.join("  •  ")}</span>
-            <span aria-hidden="true">{bannerMessages.join("  •  ")}</span>
+            <span>{displayBannerMessages.join("  •  ")}</span>
+            <span aria-hidden="true">{displayBannerMessages.join("  •  ")}</span>
           </div>
         </aside>
       )}
@@ -286,8 +337,7 @@ function App() {
           <p>
             From structure fires and medical emergencies to storm response and
             community education, our members bring professional skils when it
-            matters most. We are your neighbors and we are honored to answer the
-            call.
+            matters most.
           </p>
         </section>
         <section className="wrap services" id="services">
@@ -330,18 +380,13 @@ function App() {
                 info.jsEvent.preventDefault();
                 setSelectedEvent({
                   title: info.event.title,
-                  details: info.event.extendedProps.details,
+                  details:
+                    info.event.extendedProps.description ||
+                    info.event.extendedProps.details,
+                  location: info.event.extendedProps.location,
                 });
               }}
             />
-            {selectedEvent && (
-              <div className="event-detail" role="status">
-                <p className="event-label">Event details</p>
-                <h3>{selectedEvent.title}</h3>
-                <p>{selectedEvent.details}</p>
-              </div>
-            )}
-
             <h3>Stay connected with the department.</h3>
             <p>
               Find open houses, fundraisers, training events, and community
@@ -364,9 +409,7 @@ function App() {
               Training, gear, and a supportive team are provided. You only need
               a willingness to learn and serve.
             </p>
-            <a className="button" href="#contact">
-              Learn about volunteering →
-            </a>
+            <strong>Reach out to a member today to get an application!</strong>
           </div>
         </section>
         <section className="section wrap location">
@@ -415,7 +458,21 @@ function App() {
           </div>
           <div>
             <p>
-              <a href="tel:+14023657750"></a>
+              <a className="phone-link" href="tel:+14023657750">
+                <TelephoneFill aria-hidden="true" size={14} />
+                <span>(402) 365-7750</span>
+              </a>
+            </p>
+            <p>
+              <a
+                className="social-link"
+                href="https://www.facebook.com/deshlervfd"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <Facebook aria-hidden="true" size={15} />
+                <span>Follow us on Facebook</span>
+              </a>
             </p>
             <p>Emergency services: dial 911</p>
           </div>
@@ -424,6 +481,59 @@ function App() {
           © {new Date().getFullYear()} Deshler Volunteer Fire & Rescue
         </div>
       </footer>
+      {selectedEvent && (
+        <div
+          className="event-modal-backdrop"
+          onMouseDown={() => setSelectedEvent(null)}
+        >
+          <section
+            className="event-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="event-modal-title"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <button
+              className="event-modal-close"
+              type="button"
+              onClick={() => setSelectedEvent(null)}
+              aria-label="Close event details"
+            >
+              ×
+            </button>
+            <p className="event-label">Event details</p>
+            <h2 id="event-modal-title">{selectedEvent.title}</h2>
+            <div className="event-modal-content">
+              <div>
+                <p>
+                  {selectedEvent.details || "More details will be shared soon."}
+                </p>
+                {selectedEvent.location && (
+                  <p className="event-modal-location">
+                    {selectedEvent.location}
+                  </p>
+                )}
+              </div>
+              {selectedEvent.location && (
+                <div className="event-modal-map">
+                  <iframe
+                    title={`Map for ${selectedEvent.title}`}
+                    loading="lazy"
+                    src={`https://www.google.com/maps?q=${encodeURIComponent(selectedEvent.location)}&output=embed`}
+                  />
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(selectedEvent.location)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Open in Maps →
+                  </a>
+                </div>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
     </>
   );
 }
@@ -437,6 +547,12 @@ const view =
     <AdminLogin />
   ) : route === "/admin/logout" ? (
     <AdminLogout />
+  ) : route === "/admin/forgot-password" ? (
+    <AdminForgotPassword />
+  ) : route === "/admin/reset-password" ? (
+    <AdminResetPassword />
+  ) : route === "/admin/auth/callback" ? (
+    <AdminAuthCallback />
   ) : route === "/admin/users" ? (
     <AdminGate>
       <AdminUsers />
