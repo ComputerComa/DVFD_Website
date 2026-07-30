@@ -1,0 +1,26 @@
+{
+  "name": "deshler-fire-rescue",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@fullcalendar/daygrid": "^6.1.19",
+    "@fullcalendar/interaction": "^6.1.19",
+    "@fullcalendar/list": "^6.1.19",
+    "@fullcalendar/react": "^6.1.19",
+    "@fullcalendar/rrule": "^6.1.19",
+    "@fullcalendar/timegrid": "^6.1.19",
+    "@supabase/supabase-js": "^2.111.0",
+    "@vitejs/plugin-react": "latest",
+    "react": "latest",
+    "react-bootstrap-icons": "^1.11.6",
+    "react-dom": "latest",
+    "rrule": "^2.8.1",
+    "vite": "latest"
+  }
+}

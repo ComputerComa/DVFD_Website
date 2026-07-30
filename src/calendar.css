@@ -1,0 +1,88 @@
+.fc {
+  --fc-border-color: #dce3e4;
+  --fc-button-bg-color: #102634;
+  --fc-button-border-color: #102634;
+  --fc-button-hover-bg-color: #c72d38;
+  --fc-button-hover-border-color: #c72d38;
+  --fc-button-active-bg-color: #c72d38;
+  --fc-button-active-border-color: #c72d38;
+  --fc-event-bg-color: #c72d38;
+  --fc-event-border-color: #c72d38;
+  --fc-today-bg-color: #f5f2ea;
+  margin-bottom: 1.5rem;
+}
+.fc .fc-toolbar-title {
+  color: #102634;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.9rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.fc .fc-button {
+  border-radius: 0;
+  font-family: Manrope, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.fc .fc-col-header-cell-cushion {
+  color: #102634;
+  font-size: 0.67rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.fc .fc-daygrid-day-number {
+  color: #102634;
+  font-size: 0.8rem;
+  text-decoration: none;
+}
+.fc .fc-event {
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 4px;
+}
+.event-panel .fc-list {
+  border: 0;
+}
+.event-panel .fc-list-day-cushion {
+  background: #f5f2ea;
+  color: #102634;
+  padding: 0.65rem 0.8rem;
+}
+.event-panel .fc-list-day-text,
+.event-panel .fc-list-day-side-text {
+  color: #102634;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+.event-panel .fc-list-event td {
+  border-color: #dce3e4;
+  padding: 0.8rem 0.6rem;
+}
+.event-panel .fc-list-event:hover td {
+  background: #fff6f6;
+}
+.event-panel .fc-list-event-title a,
+.event-panel .fc-list-event-time {
+  color: #102634;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+.event-panel .fc-list-event-dot {
+  border-color: #c72d38;
+}
+.event-detail {
+  border-top: 1px solid #dce3e4;
+  padding-top: 18px;
+}
+.event-detail p:last-child {
+  font-size: 0.9rem;
+}

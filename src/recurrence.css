@@ -1,0 +1,40 @@
+.recurrence {
+  border: 1px solid #b7c4c8;
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+}
+.recurrence legend {
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.weekday-picker,
+.monthly-rule {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+.weekday-picker button {
+  background: #fff;
+  border: 1px solid #b7c4c8;
+  color: #102634;
+  min-height: 38px;
+}
+.weekday-picker button.selected {
+  background: #102634;
+  color: #fff;
+}
+.monthly-rule label {
+  flex: 1;
+  min-width: 150px;
+}
+.recurrence output {
+  background: #f5f2ea;
+  font-family: monospace;
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+  padding: 0.75rem;
+  white-space: pre-wrap;
+}

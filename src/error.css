@@ -1,0 +1,106 @@
+.error-page {
+  background: #081822;
+  color: #fff;
+  display: grid;
+  min-height: 100vh;
+}
+.error-rail {
+  border-bottom: 1px solid #ffffff22;
+  display: flex;
+  justify-content: space-between;
+  padding: 1.5rem 24px;
+}
+.error-brand {
+  color: #fff;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 0.82;
+  text-decoration: none;
+}
+.error-brand span {
+  color: #efb65a;
+  float: left;
+  font-family: Manrope;
+  margin-right: 0.65rem;
+}
+.error-rail p {
+  font-size: 0.75rem;
+  margin: 0;
+}
+.error-rail a {
+  color: #fff;
+}
+.error-content {
+  align-self: center;
+  max-width: 850px;
+  padding: 3rem 24px 6rem;
+}
+.error-code {
+  color: #efb65a;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(9rem, 30vw, 22rem);
+  font-weight: 800;
+  letter-spacing: -0.08em;
+  line-height: 0.64;
+}
+.error-content h1 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(3rem, 7vw, 6rem);
+  letter-spacing: -0.045em;
+  line-height: 0.82;
+  margin: 1.5rem 0 1rem;
+  text-transform: uppercase;
+}
+.error-content > p:not(.eyebrow) {
+  color: #d0dcdf;
+  line-height: 1.8;
+  max-width: 500px;
+}
+.error-login {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  max-width: 440px;
+}
+.error-login label {
+  display: grid;
+  font-size: 0.74rem;
+  font-weight: 800;
+  gap: 0.4rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.error-login input {
+  border: 1px solid #75868d;
+  background: #fff;
+  color: #102634;
+  min-height: 45px;
+  padding: 0.65rem;
+}
+.error-login button {
+  background: #c72d38;
+  border: 0;
+  color: #fff;
+  font:
+    800 0.75rem Manrope,
+    sans-serif;
+  letter-spacing: 0.1em;
+  min-height: 46px;
+  text-transform: uppercase;
+}
+@media (min-width: 700px) {
+  .error-page {
+    grid-template-columns: 250px 1fr;
+  }
+  .error-rail {
+    border-bottom: 0;
+    border-right: 1px solid #ffffff22;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+  }
+  .error-rail p {
+    padding-bottom: 1rem;
+  }
+}
