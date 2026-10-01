@@ -17,7 +17,13 @@ jspm_packages/
 # TypeScript/JavaScript build outputs
 dist/
 dist-ssr/
+.nuxt/
+.output/
 *.local
+
+# Local agent preview output
+.codex_*.out
+.codex_*.err
 
 # Vite local cache
 .vite/

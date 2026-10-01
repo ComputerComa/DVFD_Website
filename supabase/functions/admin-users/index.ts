@@ -1,7 +1,9 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2?target=deno";
 const cors = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -57,6 +59,16 @@ Deno.serve(async (req) => {
     if (body.isAdmin && data.user)
       await admin.from("admins").insert({ user_id: data.user.id });
     return reply({ message: `Invitation sent to ${body.email}.` });
+  }
+  if (body.action === "send-password-reset") {
+    if (!body.email || typeof body.email !== "string")
+      return reply({ error: "A user email address is required." }, 400);
+    const { error } = await admin.auth.resetPasswordForEmail(body.email, {
+      redirectTo: body.redirectTo,
+    });
+    return error
+      ? reply({ error: error.message }, 400)
+      : reply({ message: `Password reset email sent to ${body.email}.` });
   }
   if (body.action === "set-admin") {
     if (body.userId === user.id)

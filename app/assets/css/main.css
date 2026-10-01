@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+@import "./public.css";
+@import "./calendar.css";
+@import "./events-page.css";
+@import "./error.css";
+@import "./admin.css";
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  min-width: 320px;
+}
+
+#__nuxt {
+  min-height: 100vh;
+}
+
+.sr-only {
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .admin-shell {
+    --admin-surface: #10242f;
+    --admin-panel: #142d39;
+    --admin-border: #2e4651;
+    --admin-copy: #e3eaec;
+    --admin-muted: #9eb0b7;
+  }
+}
