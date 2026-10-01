@@ -30,4 +30,5 @@ and certificates during deployment. Check both hostnames and admin sign-in after
 cutover.
 
 For a local, non-publishing check, run `npm run build` followed by
-`npx wrangler deploy --dry-run`.
+`npx wrangler dev`. Load the local URL to verify Worker startup and rendering;
+`npx wrangler deploy --dry-run` checks packaging but does not start the Worker.

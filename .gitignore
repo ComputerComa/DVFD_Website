@@ -19,6 +19,7 @@ dist/
 dist-ssr/
 .nuxt/
 .output/
+.wrangler/
 *.local
 
 # Local agent preview output
