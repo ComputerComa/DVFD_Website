@@ -1,6 +1,7 @@
 export default defineNuxtRouteMiddleware(async () => {
   const user = useSupabaseUser()
-  if (!user.value) {
+  const userId = user.value?.sub
+  if (!userId) {
     return navigateTo("/admin/login")
   }
 
@@ -8,7 +9,7 @@ export default defineNuxtRouteMiddleware(async () => {
   const { data, error } = await supabase
     .from("admins")
     .select("user_id")
-    .eq("user_id", user.value.id)
+    .eq("user_id", userId)
     .maybeSingle()
 
   if (error || !data) {
