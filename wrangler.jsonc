@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "dvfd-website",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "keep_vars": true,
+  "assets": {
+    "directory": ".output/public"
+  },
+  "routes": [
+    { "pattern": "dvfdne.org", "custom_domain": true },
+    { "pattern": "www.dvfdne.org", "custom_domain": true }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     },
   },
   nitro: {
-    preset: process.env.NITRO_PRESET,
+    preset: "cloudflare",
   },
   typescript: {
     typeCheck: true,
